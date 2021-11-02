@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.views.generic.base import (
     View,TemplateView
 )
+from django.views.generic.detail import DetailView
 from . import forms
 from datetime import datetime
+from .models import Books
 # Create your views here.
 
 class IndexView(View):
@@ -26,4 +28,14 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['name'] = kwargs.get('name') 
         context['time'] = datetime.now()
+        return context
+
+class BookDetailView(DetailView):
+    model = Books
+    template_name = 'book.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # print(context)
+        # context['form'] = forms.BookForm
         return context
