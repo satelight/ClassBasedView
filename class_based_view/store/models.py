@@ -1,4 +1,4 @@
-from abc import abstractclassmethod
+from django.urls import reverse_lazy
 from django.db import models
 
 class BaseModel(models.Model):
@@ -15,4 +15,7 @@ class Books(BaseModel):
 
     class Meta:
         db_table='books'
-        
+    
+    def get_absolute_url(self):
+        return reverse_lazy("store:detail_book", kwargs={"pk": self.pk})
+    
