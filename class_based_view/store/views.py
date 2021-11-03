@@ -3,6 +3,7 @@ from django.views.generic.base import (
     View,TemplateView
 )
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from . import forms
 from datetime import datetime
 from .models import Books
@@ -39,3 +40,14 @@ class BookDetailView(DetailView):
         # print(context)
         # context['form'] = forms.BookForm
         return context
+
+class BookListView(ListView):
+    model = Books
+    template_name = 'book_list.html'
+
+    def get_queryset(self):
+        qs = super(BookListView,self).get_queryset()
+        if 'name' in self.kwargs:
+            qs = qs.filter(name__startswith=self.kwargs['name'])
+        qs = qs.order_by('description')
+        return qs
