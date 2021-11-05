@@ -1,8 +1,9 @@
 from django.urls import path
 from .views import (
-    BookCreateView, BookDetailView, IndexView,HomeView,BookListView,UpdateBookView,BookDeleteView,BookFormView
+    BookCreateView, BookDetailView, BookRedirectView, 
+    IndexView,HomeView,BookListView,UpdateBookView,BookDeleteView,BookFormView,
 )# from django.views.generic.base import TemplateView #静的なHTMLに使用
-
+from django.views.generic.base import RedirectView
 app_name = 'store'
 
 urlpatterns = [
@@ -16,4 +17,8 @@ urlpatterns = [
     path('edit_book/<int:pk>',UpdateBookView.as_view(),name='edit_book'),
     path('delete_book/<int:pk>',BookDeleteView.as_view(),name='delete_book'),
     path('book_form/',BookFormView.as_view(),name='book_form'),
+    path('google/',RedirectView.as_view(url="https://google.co.jp")),
+    path('book_redirect_view',BookRedirectView.as_view(),name="book_redirect_view"),
+    path('book_redirect_view/<int:pk>', BookRedirectView.as_view(),name="book_redirect_view"),
+
 ]

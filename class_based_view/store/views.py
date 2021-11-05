@@ -7,6 +7,8 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import (
     CreateView,UpdateView,DeleteView,FormView
 )
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic.base import RedirectView
 from django.urls import reverse_lazy
 from . import forms
 from datetime import date, datetime
@@ -79,14 +81,19 @@ class BookCreateView(CreateView):
         return initial
 
 
-class UpdateBookView(UpdateView):
+class UpdateBookView(SuccessMessageMixin,UpdateView):
     template_name = 'update_book.html'
     form_class = forms.BookUpdateForm
+    success_message = '更新に成功しました'
     model = Books
 
     def get_success_url(self):
         print(self.object)
         return reverse_lazy('store:edit_book',kwargs={'pk':self.object.id})
+
+    def get_success_message(self, cleaned_data):
+        print(cleaned_data)
+        return cleaned_data.get('name')+'を更新しました'
 
 class BookDeleteView(DeleteView):
     model = Books
@@ -103,8 +110,19 @@ class BookFormView(FormView):
         initial = super(BookFormView,self).get_initial()
         initial['name'] = 'form sample'
         return initial
-        
+
     def form_valid(self, form):
         if form.is_valid():
             form.save()
         return super(BookFormView,self).form_valid(form)
+
+
+class BookRedirectView(RedirectView):
+    url='https://google.co.jp'
+
+    def get_redirect_url(self, *args, **kwargs):
+        book=Books.objects.first()
+        print(book)
+        if 'pk' in kwargs:
+            return reverse_lazy('store:detail_book',kwargs={'pk':kwargs['pk']}) 
+        return reverse_lazy('store:edit_book',kwargs={'pk':book.pk})
