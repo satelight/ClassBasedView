@@ -12,7 +12,7 @@ from django.views.generic.base import RedirectView
 from django.urls import reverse_lazy
 from . import forms
 from datetime import date, datetime
-from .models import Books
+from .models import Books, Pictures
 # Create your views here.
 
 
@@ -95,6 +95,23 @@ class UpdateBookView(SuccessMessageMixin,UpdateView):
         print(cleaned_data)
         return cleaned_data.get('name')+'を更新しました'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        picture_form = forms.PictureUploadForm()
+        pictures = Pictures.objects.filter_by_book(book=self.object)
+        context['pictures'] = pictures
+        print([ i.picture for i in context['pictures']])
+        context['picture_form'] = picture_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # 画像をアップロードする処理を書く
+        picture_form = forms.PictureUploadForm(request.POST or None,request.FILES or None)
+        if picture_form.is_valid() and request.FILES:
+            book = self.get_object() #どの本なのか取得
+            picture_form.save(book=book)
+    
+        return super(UpdateBookView,self).post(request, *args, **kwargs)
 class BookDeleteView(DeleteView):
     model = Books
     template_name = 'delete_book.html'

@@ -4,6 +4,8 @@ from .views import (
     IndexView,HomeView,BookListView,UpdateBookView,BookDeleteView,BookFormView,
 )# from django.views.generic.base import TemplateView #静的なHTMLに使用
 from django.views.generic.base import RedirectView
+
+
 app_name = 'store'
 
 urlpatterns = [
@@ -22,3 +24,6 @@ urlpatterns = [
     path('book_redirect_view/<int:pk>', BookRedirectView.as_view(),name="book_redirect_view"),
 
 ]
+
+
+
